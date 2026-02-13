@@ -1,3 +1,4 @@
+# Trust nothing below, all AI generated rubbish
 # KAssistant - Kavita API Tester
 
 A .NET 8 Avalonia application for testing Kavita server APIs.
@@ -163,20 +164,20 @@ The application includes comprehensive models for:
 
 ```
 KAssistant/
-©À©¤©¤ Models/
-©¦   ©À©¤©¤ KavitaModels.cs          # Data models for Kavita API
-©¦   ©¸©¤©¤ AppSettings.cs           # Application settings model
-©À©¤©¤ Services/
-©¦   ©À©¤©¤ KavitaApiService.cs      # API client service
-©¦   ©¸©¤©¤ SettingsService.cs       # Settings persistence service
-©À©¤©¤ ViewModels/
-©¦   ©À©¤©¤ MainWindowViewModel.cs   # Main window logic
-©¦   ©¸©¤©¤ ViewModelBase.cs         # Base view model
-©À©¤©¤ Views/
-©¦   ©¸©¤©¤ MainWindow.axaml         # Main window UI
-©À©¤©¤ Converters/
-©¦   ©¸©¤©¤ ValueConverters.cs       # XAML value converters
-©¸©¤©¤ KAssistant.csproj            # Project file
+å¿µå²¸å²¸ Models/
+å²«   å¿µå²¸å²¸ KavitaModels.cs          # Data models for Kavita API
+å²«   å¼©å²¸å²¸ AppSettings.cs           # Application settings model
+å¿µå²¸å²¸ Services/
+å²«   å¿µå²¸å²¸ KavitaApiService.cs      # API client service
+å²«   å¼©å²¸å²¸ SettingsService.cs       # Settings persistence service
+å¿µå²¸å²¸ ViewModels/
+å²«   å¿µå²¸å²¸ MainWindowViewModel.cs   # Main window logic
+å²«   å¼©å²¸å²¸ ViewModelBase.cs         # Base view model
+å¿µå²¸å²¸ Views/
+å²«   å¼©å²¸å²¸ MainWindow.axaml         # Main window UI
+å¿µå²¸å²¸ Converters/
+å²«   å¼©å²¸å²¸ ValueConverters.cs       # XAML value converters
+å¼©å²¸å²¸ KAssistant.csproj            # Project file
 ```
 
 ## Troubleshooting
