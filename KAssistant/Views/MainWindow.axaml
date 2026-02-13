@@ -1,0 +1,388 @@
+﻿<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:KAssistant.ViewModels"
+        xmlns:converters="using:KAssistant.Converters"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="1200" d:DesignHeight="800"
+        x:Class="KAssistant.Views.MainWindow"
+        x:DataType="vm:MainWindowViewModel"
+        Icon="/Assets/avalonia-logo.ico"
+        Title="KAssistant - Kavita API Tester"
+        Width="1200" Height="800"
+        MinWidth="900" MinHeight="600">
+
+    <Window.Resources>
+        <converters:BoolToPassFailConverter x:Key="PassFailConverter"/>
+        <converters:BoolToColorConverter x:Key="ColorConverter"/>
+        <converters:StringNullOrEmptyConverter x:Key="StringNotEmptyConverter"/>
+    </Window.Resources>
+
+    <Design.DataContext>
+        <vm:MainWindowViewModel/>
+    </Design.DataContext>
+
+    <Grid Margin="10">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="380" MinWidth="300"/>
+            <ColumnDefinition Width="5"/>
+            <ColumnDefinition Width="*" MinWidth="400"/>
+        </Grid.ColumnDefinitions>
+
+        <!-- Left Panel: Configuration and Quick Actions -->
+        <ScrollViewer Grid.Column="0" VerticalScrollBarVisibility="Auto">
+            <Grid RowDefinitions="Auto,Auto,Auto,Auto" Margin="0,0,5,0">
+                <!-- Title -->
+                <TextBlock Grid.Row="0" 
+                           Text="Kavita API Tester"
+                           FontSize="22" 
+                           FontWeight="Bold"
+                           Margin="0,0,0,15"/>
+
+                <!-- Configuration Panel -->
+                <Border Grid.Row="1" 
+                        BorderBrush="Gray" 
+                        BorderThickness="1" 
+                        CornerRadius="5" 
+                        Padding="12"
+                        Margin="0,0,0,10">
+                    <StackPanel Spacing="8">
+                        <TextBlock Text="Server Configuration" FontSize="14" FontWeight="SemiBold"/>
+                        
+                        <Grid ColumnDefinitions="90,*">
+                            <TextBlock Grid.Column="0" Text="Server URL:" VerticalAlignment="Center" FontSize="12"/>
+                            <TextBox Grid.Column="1" 
+                                     Text="{Binding ServerUrl}"
+                                     Watermark="http://localhost:5000"
+                                     IsEnabled="{Binding !IsRunning}"
+                                     FontSize="12"/>
+                        </Grid>
+
+                        <Grid ColumnDefinitions="90,*">
+                            <TextBlock Grid.Column="0" Text="Username:" VerticalAlignment="Center" FontSize="12"/>
+                            <TextBox Grid.Column="1" 
+                                     Text="{Binding Username}"
+                                     Watermark="Enter username"
+                                     IsEnabled="{Binding !IsRunning}"
+                                     FontSize="12"/>
+                        </Grid>
+
+                        <Grid ColumnDefinitions="90,*">
+                            <TextBlock Grid.Column="0" Text="Password:" VerticalAlignment="Center" FontSize="12"/>
+                            <TextBox Grid.Column="1" 
+                                     Text="{Binding Password}"
+                                     Watermark="Enter password"
+                                     PasswordChar="●"
+                                     IsEnabled="{Binding !IsRunning}"
+                                     FontSize="12"/>
+                        </Grid>
+
+                        <CheckBox Content="Remember credentials"
+                                  IsChecked="{Binding RememberCredentials}"
+                                  IsEnabled="{Binding !IsRunning}"
+                                  Margin="90,0,0,0"
+                                  FontSize="11"/>
+
+                        <StackPanel Orientation="Horizontal" Spacing="8" Margin="0,8,0,0">
+                            <Button Content="Test Login"
+                                    Command="{Binding TestLoginCommand}"
+                                    IsEnabled="{Binding !IsRunning}"
+                                    Padding="12,6"
+                                    FontSize="11"/>
+                            <Button Content="💾 Save"
+                                    Command="{Binding SaveSettingsCommand}"
+                                    IsEnabled="{Binding !IsRunning}"
+                                    Padding="8,6"
+                                    FontSize="11"/>
+                            <Button Content="🗑️ Clear"
+                                    Command="{Binding ClearSettingsCommand}"
+                                    IsEnabled="{Binding !IsRunning}"
+                                    Padding="8,6"
+                                    FontSize="11"/>
+                        </StackPanel>
+                    </StackPanel>
+                </Border>
+
+                <!-- Browser Panel -->
+                <Border Grid.Row="2"
+                        BorderBrush="Gray"
+                        BorderThickness="1"
+                        CornerRadius="5"
+                        Padding="12"
+                        Margin="0,0,0,10">
+                    <StackPanel Spacing="8">
+                        <TextBlock Text="Browse and Metadata" FontSize="14" FontWeight="SemiBold"/>
+                        
+                        <!-- Search -->
+                        <Grid ColumnDefinitions="*,Auto">
+                            <TextBox Grid.Column="0"
+                                     Text="{Binding SearchTerm}"
+                                     Watermark="Search series..."
+                                     IsEnabled="{Binding !IsRunning}"
+                                     FontSize="12"/>
+                            <Button Grid.Column="1"
+                                    Content="🔍"
+                                    Command="{Binding SearchSeriesCommand}"
+                                    IsEnabled="{Binding !IsRunning}"
+                                    Padding="8,6"
+                                    Margin="5,0,0,0"
+                                    FontSize="11"/>
+                        </Grid>
+
+                        <!-- Library ID -->
+                        <Grid ColumnDefinitions="80,*,Auto">
+                            <TextBlock Grid.Column="0" Text="Library ID:" VerticalAlignment="Center" FontSize="11"/>
+                            <TextBox Grid.Column="1"
+                                     Text="{Binding SelectedLibraryId}"
+                                     Watermark="e.g. 1"
+                                     IsEnabled="{Binding !IsRunning}"
+                                     FontSize="12"/>
+                            <Button Grid.Column="2"
+                                    Content="Load"
+                                    Command="{Binding LoadSeriesForLibraryCommand}"
+                                    IsEnabled="{Binding !IsRunning}"
+                                    Padding="8,6"
+                                    Margin="5,0,0,0"
+                                    FontSize="10"/>
+                        </Grid>
+
+                        <!-- Series ID -->
+                        <Grid ColumnDefinitions="80,*" RowDefinitions="Auto,Auto">
+                            <TextBlock Grid.Column="0" Grid.Row="0" Text="Series ID:" VerticalAlignment="Center" FontSize="11"/>
+                            <TextBox Grid.Column="1" Grid.Row="0"
+                                     Text="{Binding SelectedSeriesId}"
+                                     Watermark="e.g. 123"
+                                     IsEnabled="{Binding !IsRunning}"
+                                     FontSize="12"/>
+                            <StackPanel Grid.Column="1" Grid.Row="1" Orientation="Horizontal" Spacing="5" Margin="0,5,0,0">
+                                <Button Content="Details"
+                                        Command="{Binding GetSeriesDetailsCommand}"
+                                        IsEnabled="{Binding !IsRunning}"
+                                        Padding="8,5"
+                                        FontSize="10"/>
+                                <Button Content="Metadata"
+                                        Command="{Binding GetSeriesMetadataCommand}"
+                                        IsEnabled="{Binding !IsRunning}"
+                                        Padding="8,5"
+                                        FontSize="10"/>
+                                <Button Content="View"
+                                        Command="{Binding ViewSeriesMetadataWindowCommand}"
+                                        IsEnabled="{Binding !IsRunning}"
+                                        Padding="8,5"
+                                        FontSize="10"
+                                        ToolTip.Tip="Open in new window"/>
+                            </StackPanel>
+                        </Grid>
+
+                        <!-- Quick Actions -->
+                        <TextBlock Text="Quick Actions:" FontWeight="SemiBold" Margin="0,8,0,0" FontSize="11"/>
+                        <WrapPanel Orientation="Horizontal">
+                            <Button Content="📖 Libraries"
+                                    Command="{Binding LoadLibrariesCommand}"
+                                    IsEnabled="{Binding !IsRunning}"
+                                    Padding="8,5"
+                                    FontSize="10"
+                                    Margin="0,0,5,5"/>
+                            <Button Content="🆕 Recent"
+                                    Command="{Binding TestRecentlyAddedCommand}"
+                                    IsEnabled="{Binding !IsRunning}"
+                                    Padding="8,5"
+                                    FontSize="10"
+                                    Margin="0,0,5,5"/>
+                            <Button Content="📚 On Deck"
+                                    Command="{Binding TestOnDeckCommand}"
+                                    IsEnabled="{Binding !IsRunning}"
+                                    Padding="8,5"
+                                    FontSize="10"
+                                    Margin="0,0,5,5"/>
+                            <Button Content="🗂️ Browse All"
+                                    Command="{Binding OpenSeriesBrowserCommand}"
+                                    IsEnabled="{Binding !IsRunning}"
+                                    Padding="8,5"
+                                    FontSize="10"
+                                    Margin="0,0,5,5"
+                                    ToolTip.Tip="Open series browser window"
+                                    FontWeight="SemiBold"/>
+                        </WrapPanel>
+                    </StackPanel>
+                </Border>
+
+                <!-- Test Controls -->
+                <Border Grid.Row="3"
+                        BorderBrush="Gray"
+                        BorderThickness="1"
+                        CornerRadius="5"
+                        Padding="12">
+                    <StackPanel Spacing="8">
+                        <TextBlock Text="🧪 API Tests" FontSize="14" FontWeight="SemiBold"/>
+                        
+                        <Button Content="Run All Tests"
+                                Command="{Binding RunAllTestsCommand}"
+                                IsEnabled="{Binding !IsRunning}"
+                                HorizontalAlignment="Stretch"
+                                Padding="12,6"
+                                FontSize="11"/>
+                        
+                        <Button Content="Clear Results"
+                                Command="{Binding ClearResultsCommand}"
+                                IsEnabled="{Binding !IsRunning}"
+                                HorizontalAlignment="Stretch"
+                                Padding="12,6"
+                                FontSize="11"/>
+
+                        <TextBlock Text="Individual Tests:" FontWeight="SemiBold" Margin="0,8,0,0" FontSize="11"/>
+                        <ScrollViewer MaxHeight="250" VerticalScrollBarVisibility="Auto">
+                            <StackPanel Spacing="4">
+                                <Button Content="Connectivity"
+                                        Command="{Binding TestConnectivityCommand}"
+                                        IsEnabled="{Binding !IsRunning}"
+                                        HorizontalAlignment="Stretch"
+                                        Padding="8,4"
+                                        FontSize="11"/>
+                                <Button Content="Server Info"
+                                        Command="{Binding TestServerInfoCommand}"
+                                        IsEnabled="{Binding !IsRunning}"
+                                        HorizontalAlignment="Stretch"
+                                        Padding="8,4"
+                                        FontSize="11"/>
+                                <Button Content="Libraries"
+                                        Command="{Binding TestLibrariesCommand}"
+                                        IsEnabled="{Binding !IsRunning}"
+                                        HorizontalAlignment="Stretch"
+                                        Padding="8,4"
+                                        FontSize="11"/>
+                                <Button Content="Users"
+                                        Command="{Binding TestUsersCommand}"
+                                        IsEnabled="{Binding !IsRunning}"
+                                        HorizontalAlignment="Stretch"
+                                        Padding="8,4"
+                                        FontSize="11"/>
+                                <Button Content="Collections"
+                                        Command="{Binding TestCollectionsCommand}"
+                                        IsEnabled="{Binding !IsRunning}"
+                                        HorizontalAlignment="Stretch"
+                                        Padding="8,4"
+                                        FontSize="11"/>
+                                <Button Content="Reading Lists"
+                                        Command="{Binding TestReadingListsCommand}"
+                                        IsEnabled="{Binding !IsRunning}"
+                                        HorizontalAlignment="Stretch"
+                                        Padding="8,4"
+                                        FontSize="11"/>
+                                <Button Content="Server Stats"
+                                        Command="{Binding TestServerStatsCommand}"
+                                        IsEnabled="{Binding !IsRunning}"
+                                        HorizontalAlignment="Stretch"
+                                        Padding="8,4"
+                                        FontSize="11"/>
+                                <Button Content="User Stats"
+                                        Command="{Binding TestUserStatsCommand}"
+                                        IsEnabled="{Binding !IsRunning}"
+                                        HorizontalAlignment="Stretch"
+                                        Padding="8,4"
+                                        FontSize="11"/>
+                            </StackPanel>
+                        </ScrollViewer>
+                    </StackPanel>
+                </Border>
+            </Grid>
+        </ScrollViewer>
+
+        <!-- Splitter -->
+        <GridSplitter Grid.Column="1" 
+                      Background="LightGray" 
+                      ResizeDirection="Columns"
+                      Width="5"/>
+
+        <!-- Right Panel: Results -->
+        <Grid Grid.Column="2" RowDefinitions="Auto,*,Auto" Margin="5,0,0,0">
+            <!-- Results Header -->
+            <TextBlock Grid.Row="0" 
+                       Text="Test Results" 
+                       FontSize="14" 
+                       FontWeight="SemiBold"
+                       Margin="0,0,0,10"/>
+            
+            <!-- Results Panel -->
+            <Border Grid.Row="1" 
+                    BorderBrush="Gray" 
+                    BorderThickness="1" 
+                    CornerRadius="5" 
+                    Padding="10"
+                    Margin="0,0,0,10">
+                <ScrollViewer>
+                    <ItemsControl ItemsSource="{Binding TestResults}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Border BorderBrush="LightGray" 
+                                        BorderThickness="0,0,0,1" 
+                                        Padding="8"
+                                        Margin="0,4">
+                                    <StackPanel Spacing="4">
+                                        <Grid ColumnDefinitions="*,Auto">
+                                            <TextBlock Grid.Column="0"
+                                                       Text="{Binding TestName}"
+                                                       FontWeight="SemiBold"
+                                                       FontSize="13"
+                                                       TextWrapping="Wrap"/>
+                                            <TextBlock Grid.Column="1"
+                                                       Text="{Binding Success, Converter={StaticResource PassFailConverter}}"
+                                                       Foreground="{Binding Success, Converter={StaticResource ColorConverter}}"
+                                                       FontWeight="Bold"
+                                                       FontSize="13"
+                                                       Margin="5,0,0,0"/>
+                                        </Grid>
+                                        
+                                        <TextBlock Text="{Binding Message}" 
+                                                   TextWrapping="Wrap"
+                                                   FontSize="12"/>
+                                        
+                                        <TextBlock Text="{Binding Duration.TotalSeconds, StringFormat='Duration: {0:F2}s'}"
+                                                   FontSize="10"
+                                                   Foreground="Gray"/>
+                                        
+                                        <ScrollViewer MaxHeight="200" 
+                                                      VerticalScrollBarVisibility="Auto"
+                                                      HorizontalScrollBarVisibility="Auto"
+                                                      IsVisible="{Binding Details, Converter={StaticResource StringNotEmptyConverter}}">
+                                            <TextBlock Text="{Binding Details}"
+                                                       TextWrapping="Wrap"
+                                                       FontSize="10"
+                                                       Foreground="DarkGray"
+                                                       FontFamily="Consolas,Courier New,monospace"/>
+                                        </ScrollViewer>
+                                    </StackPanel>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </ScrollViewer>
+            </Border>
+
+            <!-- Status Bar -->
+            <Border Grid.Row="2" 
+                    Background="LightGray" 
+                    Padding="10"
+                    CornerRadius="3">
+                <Grid ColumnDefinitions="Auto,*,Auto">
+                    <TextBlock Grid.Column="0" 
+                               Text="Status: " 
+                               FontWeight="SemiBold"
+                               FontSize="11"/>
+                    <TextBlock Grid.Column="1" 
+                               Text="{Binding StatusMessage}"
+                               TextWrapping="Wrap"
+                               FontSize="11"/>
+                    <TextBlock Grid.Column="2"
+                               Text="●"
+                               FontSize="16"
+                               Foreground="Orange"
+                               IsVisible="{Binding IsRunning}"
+                               ToolTip.Tip="Tests running..."
+                               Margin="5,0,0,0"/>
+                </Grid>
+            </Border>
+        </Grid>
+    </Grid>
+
+</Window>

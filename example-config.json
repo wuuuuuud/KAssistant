@@ -1,0 +1,30 @@
+{
+  "exampleConfigurations": [
+    {
+      "name": "Local Kavita Instance",
+      "serverUrl": "http://localhost:5000",
+      "description": "Default Kavita installation on local machine"
+    },
+    {
+      "name": "Remote Kavita Instance",
+      "serverUrl": "http://192.168.1.100:5000",
+      "description": "Kavita server on local network"
+    },
+    {
+      "name": "Kavita with Custom Port",
+      "serverUrl": "http://localhost:8080",
+      "description": "Kavita with custom port configuration"
+    },
+    {
+      "name": "HTTPS Kavita",
+      "serverUrl": "https://kavita.example.com",
+      "description": "Kavita with SSL/TLS encryption"
+    }
+  ],
+  "notes": [
+    "Default Kavita port is 5000",
+    "Make sure your Kavita server is running before testing",
+    "Admin credentials are required to test user management endpoints",
+    "Some endpoints may require specific user permissions"
+  ]
+}

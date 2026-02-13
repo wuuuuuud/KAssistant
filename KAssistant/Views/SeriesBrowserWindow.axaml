@@ -1,0 +1,265 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:KAssistant.ViewModels"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="900" d:DesignHeight="700"
+        x:Class="KAssistant.Views.SeriesBrowserWindow"
+        x:DataType="vm:SeriesBrowserViewModel"
+        Icon="/Assets/avalonia-logo.ico"
+        Title="Series Browser"
+        Width="900" Height="700"
+        MinWidth="700" MinHeight="500">
+
+    <Design.DataContext>
+        <vm:SeriesBrowserViewModel/>
+    </Design.DataContext>
+
+    <Grid Margin="15" RowDefinitions="Auto,Auto,*,Auto">
+        <!-- Header -->
+        <Grid Grid.Row="0" ColumnDefinitions="*,Auto,Auto" Margin="0,0,0,15">
+            <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="10">
+                <TextBlock Text="Series Browser"
+                           FontSize="24"
+                           FontWeight="Bold"
+                           VerticalAlignment="Center"/>
+                <TextBlock Text="{Binding TotalSeriesText}"
+                           FontSize="14"
+                           Foreground="Gray"
+                           VerticalAlignment="Center"/>
+            </StackPanel>
+            <Button Grid.Column="1"
+                    Content="?? Refresh"
+                    Command="{Binding RefreshCommand}"
+                    IsEnabled="{Binding !IsLoading}"
+                    Padding="12,6"
+                    FontSize="12"
+                    Margin="0,0,10,0"/>
+            <Button Grid.Column="2"
+                    Content="Close"
+                    Command="{Binding CloseWindowCommand}"
+                    Padding="12,6"
+                    FontSize="12"/>
+        </Grid>
+
+        <!-- Filter Bar -->
+        <Border Grid.Row="1"
+                BorderBrush="LightGray"
+                BorderThickness="1"
+                CornerRadius="5"
+                Padding="12"
+                Margin="0,0,0,15">
+            <Grid ColumnDefinitions="Auto,*,Auto,Auto" RowDefinitions="Auto,Auto">
+                <!-- Library Filter -->
+                <TextBlock Grid.Column="0" Grid.Row="0"
+                           Text="Library:"
+                           VerticalAlignment="Center"
+                           Margin="0,0,10,0"
+                           FontSize="12"/>
+                <ComboBox Grid.Column="1" Grid.Row="0"
+                          ItemsSource="{Binding Libraries}"
+                          SelectedItem="{Binding SelectedLibrary}"
+                          IsEnabled="{Binding !IsLoading}"
+                          FontSize="12"
+                          MinWidth="200">
+                    <ComboBox.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding Name}"/>
+                        </DataTemplate>
+                    </ComboBox.ItemTemplate>
+                </ComboBox>
+
+                <!-- Search Box -->
+                <TextBlock Grid.Column="0" Grid.Row="1"
+                           Text="Search:"
+                           VerticalAlignment="Center"
+                           Margin="0,10,10,0"
+                           FontSize="12"/>
+                <TextBox Grid.Column="1" Grid.Row="1"
+                         Text="{Binding SearchText}"
+                         Watermark="Filter by name..."
+                         IsEnabled="{Binding !IsLoading}"
+                         FontSize="12"
+                         Margin="0,10,0,0"/>
+                
+                <Button Grid.Column="2" Grid.Row="1"
+                        Content="Clear"
+                        Command="{Binding ClearFilterCommand}"
+                        IsEnabled="{Binding !IsLoading}"
+                        Padding="10,6"
+                        FontSize="11"
+                        Margin="10,10,10,0"/>
+
+                <TextBlock Grid.Column="3" Grid.Row="1"
+                           Text="{Binding FilteredCountText}"
+                           VerticalAlignment="Center"
+                           FontSize="11"
+                           Foreground="Gray"
+                           Margin="0,10,0,0"/>
+            </Grid>
+        </Border>
+
+        <!-- Series List -->
+        <Border Grid.Row="2"
+                BorderBrush="Gray"
+                BorderThickness="1"
+                CornerRadius="5"
+                Padding="0"
+                Margin="0,0,0,15">
+            <Grid>
+                <!-- Loading Indicator -->
+                <Border Background="White"
+                        IsVisible="{Binding IsLoading}"
+                        ZIndex="10">
+                    <StackPanel VerticalAlignment="Center"
+                                HorizontalAlignment="Center"
+                                Spacing="15">
+                        <TextBlock Text="?"
+                                   FontSize="48"
+                                   HorizontalAlignment="Center"/>
+                        <TextBlock Text="Loading series..."
+                                   FontSize="16"
+                                   HorizontalAlignment="Center"/>
+                    </StackPanel>
+                </Border>
+
+                <!-- Error Message -->
+                <Border Background="LightPink"
+                        BorderBrush="Red"
+                        BorderThickness="1"
+                        CornerRadius="5"
+                        Padding="20"
+                        Margin="20"
+                        IsVisible="{Binding HasError}"
+                        ZIndex="10">
+                    <StackPanel Spacing="10">
+                        <StackPanel Orientation="Horizontal" Spacing="10">
+                            <TextBlock Text="?" FontSize="24"/>
+                            <TextBlock Text="Error Loading Series"
+                                       FontSize="16"
+                                       FontWeight="SemiBold"
+                                       VerticalAlignment="Center"/>
+                        </StackPanel>
+                        <TextBlock Text="{Binding ErrorMessage}"
+                                   TextWrapping="Wrap"
+                                   FontSize="13"/>
+                    </StackPanel>
+                </Border>
+
+                <!-- Series List -->
+                <ScrollViewer VerticalScrollBarVisibility="Auto"
+                              IsVisible="{Binding !IsLoading}">
+                    <ItemsControl ItemsSource="{Binding FilteredSeries}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Border BorderBrush="LightGray"
+                                        BorderThickness="0,0,0,1"
+                                        Padding="15,12"
+                                        Background="Transparent"
+                                        Cursor="Hand">
+                                    <Border.Styles>
+                                        <Style Selector="Border:pointerover">
+                                            <Setter Property="Background" Value="#F5F5F5"/>
+                                        </Style>
+                                    </Border.Styles>
+                                    <Grid ColumnDefinitions="*,Auto">
+                                        <StackPanel Grid.Column="0" Spacing="5">
+                                            <TextBlock Text="{Binding Name}"
+                                                       FontSize="14"
+                                                       FontWeight="SemiBold"
+                                                       TextWrapping="Wrap"/>
+                                            <StackPanel Orientation="Horizontal" Spacing="15">
+                                                <TextBlock FontSize="11" Foreground="Gray">
+                                                    <Run Text="ID:"/>
+                                                    <Run Text="{Binding Id}"/>
+                                                </TextBlock>
+                                                <TextBlock FontSize="11" Foreground="Gray">
+                                                    <Run Text="Library:"/>
+                                                    <Run Text="{Binding LibraryId}"/>
+                                                </TextBlock>
+                                                <TextBlock FontSize="11" Foreground="Gray"
+                                                           IsVisible="{Binding !!PagesRead}">
+                                                    <Run Text="Pages Read:"/>
+                                                    <Run Text="{Binding PagesRead}"/>
+                                                </TextBlock>
+                                            </StackPanel>
+                                            <TextBlock Text="{Binding Summary}"
+                                                       FontSize="11"
+                                                       Foreground="DarkGray"
+                                                       TextWrapping="Wrap"
+                                                       MaxHeight="40"
+                                                       TextTrimming="CharacterEllipsis"
+                                                       IsVisible="{Binding !!Summary}"/>
+                                        </StackPanel>
+                                        <StackPanel Grid.Column="1"
+                                                    Orientation="Horizontal"
+                                                    Spacing="5"
+                                                    VerticalAlignment="Center">
+                                            <Button Content="View"
+                                                    Command="{Binding $parent[ItemsControl].((vm:SeriesBrowserViewModel)DataContext).ViewSeriesCommand}"
+                                                    CommandParameter="{Binding}"
+                                                    Padding="10,5"
+                                                    FontSize="11"/>
+                                            <Button Content="Details"
+                                                    Command="{Binding $parent[ItemsControl].((vm:SeriesBrowserViewModel)DataContext).CopySeriesIdCommand}"
+                                                    CommandParameter="{Binding Id}"
+                                                    Padding="10,5"
+                                                    FontSize="11"
+                                                    ToolTip.Tip="Copy Series ID"/>
+                                        </StackPanel>
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </ScrollViewer>
+
+                <!-- Empty State -->
+                <StackPanel VerticalAlignment="Center"
+                            HorizontalAlignment="Center"
+                            Spacing="15"
+                            IsVisible="{Binding ShowEmptyState}">
+                    <TextBlock Text="??"
+                               FontSize="48"
+                               HorizontalAlignment="Center"
+                               Opacity="0.5"/>
+                    <TextBlock Text="No series found"
+                               FontSize="16"
+                               HorizontalAlignment="Center"
+                               Foreground="Gray"/>
+                    <TextBlock Text="Try selecting a different library or clearing the search filter"
+                               FontSize="12"
+                               HorizontalAlignment="Center"
+                               Foreground="Gray"/>
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <!-- Status Bar -->
+        <Border Grid.Row="3"
+                Background="LightGray"
+                Padding="12,8"
+                CornerRadius="3">
+            <Grid ColumnDefinitions="*,Auto">
+                <TextBlock Grid.Column="0"
+                           Text="{Binding StatusMessage}"
+                           FontSize="11"
+                           VerticalAlignment="Center"/>
+                <StackPanel Grid.Column="1"
+                            Orientation="Horizontal"
+                            Spacing="10">
+                    <TextBlock Text="¡ñ"
+                               FontSize="14"
+                               Foreground="Orange"
+                               IsVisible="{Binding IsLoading}"
+                               VerticalAlignment="Center"/>
+                    <TextBlock Text="{Binding LoadTimeText}"
+                               FontSize="11"
+                               Foreground="Gray"
+                               VerticalAlignment="Center"/>
+                </StackPanel>
+            </Grid>
+        </Border>
+    </Grid>
+
+</Window>
